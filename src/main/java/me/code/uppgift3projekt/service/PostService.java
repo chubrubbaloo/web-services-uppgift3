@@ -8,9 +8,12 @@ import me.code.uppgift3projekt.exception.PostDoesNotExistException;
 import me.code.uppgift3projekt.repository.PostRepository;
 import me.code.uppgift3projekt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 
+@Service
 public class PostService {
 
     private final PostRepository repository;

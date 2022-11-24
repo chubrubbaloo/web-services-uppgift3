@@ -31,7 +31,7 @@ public class JwtTokenService {
         }
         return JWT.create()
                 .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis()+10*1000))
+                .withExpiresAt(new Date(System.currentTimeMillis()+10000*1000))
                 .sign(algorithm);
     }
 
