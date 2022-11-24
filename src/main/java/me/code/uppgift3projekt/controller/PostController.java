@@ -2,15 +2,15 @@ package me.code.uppgift3projekt.controller;
 
 import lombok.AllArgsConstructor;
 import me.code.uppgift3projekt.data.Post;
+import me.code.uppgift3projekt.data.User;
+import me.code.uppgift3projekt.exception.PostAlreadyExistsException;
 import me.code.uppgift3projekt.service.JwtTokenService;
 import me.code.uppgift3projekt.service.PostService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -31,6 +31,14 @@ public class PostController {
     public Collection<Post> getPosts(HttpServletRequest request) {
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
         return postService.getAll();
+    }
+
+    @PostMapping("/posts")
+    public Post createPost(@RequestBody Map<String, String> json, HttpServletRequest request) throws PostAlreadyExistsException {
+        String title = json.get("title");
+        String content = json.get("content");
+        var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
+        return postService.create((User) user, title, content);
     }
 
 }
