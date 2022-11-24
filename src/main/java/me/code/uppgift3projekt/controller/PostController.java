@@ -5,8 +5,7 @@ import me.code.uppgift3projekt.data.Post;
 import me.code.uppgift3projekt.service.JwtTokenService;
 import me.code.uppgift3projekt.service.PostService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +27,7 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public Collection<Post> getPosts(HttpServletRequest request) {
-        var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
+    public Collection<Post> getPosts() {
         return postService.getAll();
     }
 
