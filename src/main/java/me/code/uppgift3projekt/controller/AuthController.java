@@ -1,23 +1,22 @@
 package me.code.uppgift3projekt.controller;
 
 
+import lombok.AllArgsConstructor;
 import me.code.uppgift3projekt.exception.UserAlreadyExistsException;
+import me.code.uppgift3projekt.service.JwtTokenService;
 import me.code.uppgift3projekt.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.Map;
 
 
 @RestController
+@AllArgsConstructor
 public class AuthController {
 
     private final UserService userService;
 
-    @Autowired
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+    private final JwtTokenService JwtTokenService;
+
 
     @PostMapping("/register")
     public String register(@RequestBody Map<String, String> json) throws UserAlreadyExistsException {
@@ -30,12 +29,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> json) throws UserAlreadyExistsException {
+    public String login(@RequestBody Map<String, String> json){
         String username = json.get("username");
         String password = json.get("password");
-
-
-        return "Registered!";
+        var user = userService.loadUserFromCredentials(username, password);
+        if (user == null){
+            return "";
+        }
+        return JwtTokenService.createToken(user);
     }
 
 }

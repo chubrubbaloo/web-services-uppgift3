@@ -1,6 +1,5 @@
 package me.code.uppgift3projekt.service;
 
-import me.code.uppgift3projekt.data.Post;
 import me.code.uppgift3projekt.data.User;
 import me.code.uppgift3projekt.exception.UserAlreadyExistsException;
 import me.code.uppgift3projekt.repository.UserRepository;
@@ -46,6 +45,17 @@ public class UserService implements UserDetailsService {
         repository.save(user);
 
         return user;
+    }
+
+    public User loadUserFromCredentials(String username, String password){
+        var user = repository.getByUsername(username);
+        if (user.isEmpty()){
+            return null;
+        }
+        if (!passwordEncoder.matches(password, user.get().getPassword())){
+            return null;
+        }
+        return user.get();
     }
 
     public Collection<User> getAll() {
