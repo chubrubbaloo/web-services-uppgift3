@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class PostService {
@@ -70,4 +71,10 @@ public class PostService {
     public Collection<Post> getAll() {
         return repository.getAll();
     }
+
+    public Optional<Post> getByTitle(String title) {
+        return repository.getByTitle(title);
+    }
+
+
 }

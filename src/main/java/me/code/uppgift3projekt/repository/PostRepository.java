@@ -23,6 +23,7 @@ public class PostRepository {
         return Optional.ofNullable(existing);
     }
 
+
     public Optional<Post> delete(Post post) {
         var existing = posts.remove(post.getTitle());
 
