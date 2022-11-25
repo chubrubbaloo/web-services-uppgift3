@@ -36,7 +36,7 @@ public class PostController {
         return postService.getAll();
     }
 
-    @PostMapping("/posts")
+    @PostMapping("/create-post")
     public Post createPost(@RequestBody Map<String, String> json, HttpServletRequest request) throws PostAlreadyExistsException {
         String title = json.get("title");
         String content = json.get("content");
