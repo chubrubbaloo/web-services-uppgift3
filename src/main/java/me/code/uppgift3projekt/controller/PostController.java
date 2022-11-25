@@ -11,6 +11,7 @@ import me.code.uppgift3projekt.service.JwtTokenService;
 import me.code.uppgift3projekt.service.PostService;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Map;
 
@@ -59,5 +60,11 @@ public class PostController{
         String title = json.get("title");
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
         return postService.delete((User) user, title);
+    }
+
+    @ExceptionHandler(PostDoesNotExistException.class)
+    public String postDoesNotExistExceptionHandler(HttpServletResponse response) {
+        response.setStatus(404);
+        return "Requested title does not exist.";
     }
 }
