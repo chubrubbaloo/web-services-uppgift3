@@ -67,4 +67,10 @@ public class PostController{
         response.setStatus(404);
         return "Requested title does not exist.";
     }
+
+    @ExceptionHandler(PostAlreadyExistsException.class)
+    public String postAlreadyExistsExceptionHandler(HttpServletResponse response) {
+        response.setStatus(403);
+        return "Title already exists. Pick a different title.";
+    }
 }
