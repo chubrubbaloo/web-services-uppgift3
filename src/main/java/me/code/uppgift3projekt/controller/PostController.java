@@ -29,7 +29,7 @@ public class PostController{
         return "yo " + user.getUsername();
     }
 
-    @GetMapping("/posts")
+    @GetMapping("/posts/getAll")
     public Collection<PostDTO> getPosts() {
         return postService.getAll().stream().map(PostDTO::new).toList();
     }

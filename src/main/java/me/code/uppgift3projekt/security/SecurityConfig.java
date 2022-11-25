@@ -33,7 +33,7 @@ public class SecurityConfig {
                 = new FilterRegistrationBean<>();
 
         registrationBean.setFilter(new JwtFilter(jwtTokenService));
-        registrationBean.addUrlPatterns("/posts/*");
+        registrationBean.addUrlPatterns("/posts");
         registrationBean.setOrder(2);
 
         return registrationBean;

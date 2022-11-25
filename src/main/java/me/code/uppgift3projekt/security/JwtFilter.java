@@ -30,7 +30,7 @@ public class JwtFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
         String authorizationHeader = httpRequest.getHeader("authorization");
-        if (!jwtTokenService.validate(authorizationHeader.split(" ")[1])){
+        if (authorizationHeader == null || authorizationHeader.split(" ").length != 2 ||!jwtTokenService.validate(authorizationHeader.split(" ")[1])){
             httpResponse.setStatus(401);
             return;
         }
