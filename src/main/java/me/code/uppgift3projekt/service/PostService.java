@@ -1,19 +1,12 @@
 package me.code.uppgift3projekt.service;
-
 import me.code.uppgift3projekt.data.Post;
 import me.code.uppgift3projekt.data.User;
-import me.code.uppgift3projekt.exception.NotOwnerException;
-import me.code.uppgift3projekt.exception.NullContentException;
-import me.code.uppgift3projekt.exception.PostAlreadyExistsException;
-import me.code.uppgift3projekt.exception.PostDoesNotExistException;
+import me.code.uppgift3projekt.exception.*;
 import me.code.uppgift3projekt.repository.PostRepository;
-import me.code.uppgift3projekt.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 public class PostService {
@@ -26,8 +19,12 @@ public class PostService {
     }
 
     public Post create(User user, String title, String content)
-            throws PostAlreadyExistsException
-    {
+            throws PostAlreadyExistsException, NullContentException, NullTitleException {
+
+        if (title == null) throw new NullTitleException();
+
+        if (content == null) throw new NullContentException();
+
         var existing = repository.getByTitle(title);
         if (existing.isPresent())
             throw new PostAlreadyExistsException();
@@ -54,18 +51,15 @@ public class PostService {
     }
 
     public Post edit(User user, String title, String updatedContent)
-            throws PostDoesNotExistException, NotOwnerException, NullContentException
-    {
+            throws PostDoesNotExistException, NotOwnerException, NullContentException {
         var post = repository
                 .getByTitle(title)
                 .orElseThrow(PostDoesNotExistException::new);
 
-
         if (!post.getCreator().equals(user))
             throw new NotOwnerException();
 
-        if (updatedContent == null)
-            throw new NullContentException();
+        if (updatedContent == null) throw new NullContentException();
 
         post.setContent(updatedContent);
         repository.save(post);
@@ -76,10 +70,5 @@ public class PostService {
     public Collection<Post> getAll() {
         return repository.getAll();
     }
-
-    public Optional<Post> getByTitle(String title) {
-        return repository.getByTitle(title);
-    }
-
 
 }

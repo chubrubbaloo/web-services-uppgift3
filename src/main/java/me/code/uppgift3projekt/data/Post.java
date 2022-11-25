@@ -14,8 +14,8 @@ public class Post {
             throw new NullContentException();
 
         this.content = content;
-
     }
+
 
 
     private String title;

@@ -3,10 +3,7 @@ package me.code.uppgift3projekt.controller;
 import lombok.AllArgsConstructor;
 import me.code.uppgift3projekt.data.PostDTO;
 import me.code.uppgift3projekt.data.User;
-import me.code.uppgift3projekt.exception.NotOwnerException;
-import me.code.uppgift3projekt.exception.NullContentException;
-import me.code.uppgift3projekt.exception.PostAlreadyExistsException;
-import me.code.uppgift3projekt.exception.PostDoesNotExistException;
+import me.code.uppgift3projekt.exception.*;
 import me.code.uppgift3projekt.service.JwtTokenService;
 import me.code.uppgift3projekt.service.PostService;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +28,7 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public PostDTO createPost(@RequestBody Map<String, String> json, HttpServletRequest request) throws PostAlreadyExistsException {
+    public PostDTO createPost(@RequestBody Map<String, String> json, HttpServletRequest request) throws PostAlreadyExistsException, NullContentException, NullTitleException {
         String title = json.get("title");
         String content = json.get("content");
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
@@ -72,10 +69,19 @@ public class PostController {
         response.setStatus(403);
         return "Permission denied. Wrong credentials for specific resource.";
     }
+
+    @ExceptionHandler(NullTitleException.class)
+    public String nullTitleExceptionHandler(HttpServletResponse response) {
+        response.setStatus(406);
+        return "Request must contain title.";
+    }
+
     @ExceptionHandler(NullContentException.class)
     public String nullContentExceptionHandler(HttpServletResponse response) {
         response.setStatus(406);
-        return "Request must contain content";
+        return "Request must contain content.";
     }
+
+
 
 }
