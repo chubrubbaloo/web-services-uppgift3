@@ -2,6 +2,7 @@ package me.code.uppgift3projekt.controller;
 
 import lombok.AllArgsConstructor;
 import me.code.uppgift3projekt.data.Post;
+import me.code.uppgift3projekt.data.PostDTO;
 import me.code.uppgift3projekt.data.User;
 import me.code.uppgift3projekt.exception.NotOwnerException;
 import me.code.uppgift3projekt.exception.PostAlreadyExistsException;
@@ -15,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
-public class PostController {
+public class PostController{
 
 
     private final JwtTokenService JwtTokenService;
@@ -29,16 +30,16 @@ public class PostController {
     }
 
     @GetMapping("/posts")
-    public Collection<Post> getPosts() {
-        return postService.getAll();
+    public Collection<PostDTO> getPosts() {
+        return postService.getAll().stream().map(PostDTO::new).toList();
     }
 
     @PostMapping("/posts")
-    public Post createPost(@RequestBody Map<String, String> json, HttpServletRequest request) throws PostAlreadyExistsException {
+    public PostDTO createPost(@RequestBody Map<String, String> json, HttpServletRequest request) throws PostAlreadyExistsException {
         String title = json.get("title");
         String content = json.get("content");
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
-        return postService.create((User) user, title, content);
+        return new PostDTO(postService.create((User) user, title, content));
     }
 
     @PutMapping("/posts")
@@ -48,7 +49,6 @@ public class PostController {
         String title = json.get("title");
         String updatedContent = json.get("updatedContent");
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
-        var post = postService.getByTitle(title);
         return postService.edit((User) user, title, updatedContent);
     }
 
@@ -60,8 +60,4 @@ public class PostController {
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
         return postService.delete((User) user, title);
     }
-
-
-
-
 }
