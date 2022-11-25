@@ -1,10 +1,10 @@
 package me.code.uppgift3projekt.controller;
 
 import lombok.AllArgsConstructor;
-import me.code.uppgift3projekt.data.Post;
 import me.code.uppgift3projekt.data.PostDTO;
 import me.code.uppgift3projekt.data.User;
 import me.code.uppgift3projekt.exception.NotOwnerException;
+import me.code.uppgift3projekt.exception.NullContentException;
 import me.code.uppgift3projekt.exception.PostAlreadyExistsException;
 import me.code.uppgift3projekt.exception.PostDoesNotExistException;
 import me.code.uppgift3projekt.service.JwtTokenService;
@@ -24,11 +24,6 @@ public class PostController {
 
     private final PostService postService;
 
-    @GetMapping("/posts/yo")
-    public String yo(HttpServletRequest request) {
-        var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
-        return "yo " + user.getUsername();
-    }
 
     @GetMapping("/posts/getAll")
     public Collection<PostDTO> getPosts() {
@@ -45,7 +40,7 @@ public class PostController {
 
     @PutMapping("/posts")
     public PostDTO updatePost(@RequestBody Map<String, String> json, HttpServletRequest request)
-            throws NotOwnerException, PostDoesNotExistException {
+            throws NotOwnerException, PostDoesNotExistException, NullContentException {
         String title = json.get("title");
         String updatedContent = json.get("updatedContent");
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
@@ -77,4 +72,10 @@ public class PostController {
         response.setStatus(403);
         return "Permission denied. Wrong credentials for specific resource.";
     }
+    @ExceptionHandler(NullContentException.class)
+    public String nullContentExceptionHandler(HttpServletResponse response) {
+        response.setStatus(406);
+        return "Request must contain content";
+    }
+
 }

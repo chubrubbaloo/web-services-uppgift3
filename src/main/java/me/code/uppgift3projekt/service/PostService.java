@@ -3,6 +3,7 @@ package me.code.uppgift3projekt.service;
 import me.code.uppgift3projekt.data.Post;
 import me.code.uppgift3projekt.data.User;
 import me.code.uppgift3projekt.exception.NotOwnerException;
+import me.code.uppgift3projekt.exception.NullContentException;
 import me.code.uppgift3projekt.exception.PostAlreadyExistsException;
 import me.code.uppgift3projekt.exception.PostDoesNotExistException;
 import me.code.uppgift3projekt.repository.PostRepository;
@@ -53,14 +54,18 @@ public class PostService {
     }
 
     public Post edit(User user, String title, String updatedContent)
-            throws PostDoesNotExistException, NotOwnerException
+            throws PostDoesNotExistException, NotOwnerException, NullContentException
     {
         var post = repository
                 .getByTitle(title)
                 .orElseThrow(PostDoesNotExistException::new);
 
+
         if (!post.getCreator().equals(user))
             throw new NotOwnerException();
+
+        if (updatedContent == null)
+            throw new NullContentException();
 
         post.setContent(updatedContent);
         repository.save(post);
