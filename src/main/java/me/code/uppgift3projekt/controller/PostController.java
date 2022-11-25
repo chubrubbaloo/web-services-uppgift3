@@ -53,11 +53,11 @@ public class PostController {
     }
 
     @DeleteMapping("/posts")
-    public Post deletePost(@RequestBody Map<String, String> json, HttpServletRequest request)
+    public PostDTO deletePost(@RequestBody Map<String, String> json, HttpServletRequest request)
             throws NotOwnerException, PostDoesNotExistException {
         String title = json.get("title");
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
-        return postService.delete((User) user, title);
+        return new PostDTO(postService.delete((User) user, title));
     }
 
     @ExceptionHandler(PostDoesNotExistException.class)
