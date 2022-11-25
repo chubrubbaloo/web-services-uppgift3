@@ -44,12 +44,12 @@ public class PostController {
     }
 
     @PutMapping("/posts")
-    public Post updatePost(@RequestBody Map<String, String> json, HttpServletRequest request)
+    public PostDTO updatePost(@RequestBody Map<String, String> json, HttpServletRequest request)
             throws NotOwnerException, PostDoesNotExistException {
         String title = json.get("title");
         String updatedContent = json.get("updatedContent");
         var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
-        return postService.edit((User) user, title, updatedContent);
+        return new PostDTO(postService.edit((User) user, title, updatedContent));
     }
 
     @DeleteMapping("/posts")
