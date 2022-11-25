@@ -6,6 +6,8 @@ import me.code.uppgift3projekt.exception.UserAlreadyExistsException;
 import me.code.uppgift3projekt.service.JwtTokenService;
 import me.code.uppgift3projekt.service.UserService;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 
@@ -37,6 +39,12 @@ public class AuthController {
             return "";
         }
         return JwtTokenService.createToken(user);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public String userAlreadyExistsExceptionHandler(HttpServletResponse response) {
+        response.setStatus(409);
+        return "A user with that username already exists. Pick a different username.";
     }
 
 }
