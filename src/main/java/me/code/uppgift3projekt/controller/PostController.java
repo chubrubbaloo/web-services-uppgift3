@@ -1,6 +1,7 @@
 package me.code.uppgift3projekt.controller;
 
 import lombok.AllArgsConstructor;
+import me.code.uppgift3projekt.data.Post;
 import me.code.uppgift3projekt.data.PostDTO;
 import me.code.uppgift3projekt.data.User;
 import me.code.uppgift3projekt.exception.*;
@@ -24,32 +25,32 @@ public class PostController {
 
     @GetMapping("/posts/getAll")
     public Collection<PostDTO> getPosts() {
-        return postService.getAll().stream().map(PostDTO::new).toList();
+        return postService.getAll().stream().map(Post::toDTO).toList();
     }
 
     @PostMapping("/posts")
-    public PostDTO createPost(@RequestBody Map<String, String> json, HttpServletRequest request) throws PostAlreadyExistsException, NullContentException, NullTitleException {
+    public PostDTO createPost(@RequestBody Map<String, String> json, HttpServletRequest request) throws PostAlreadyExistsException, NullContentException, NullTitleException, NullUserException {
         String title = json.get("title");
         String content = json.get("content");
-        var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
-        return new PostDTO(postService.create((User) user, title, content));
+        var user = getUserFromRequest(request);
+        return postService.create(user, title, content).toDTO();
     }
 
     @PutMapping("/posts")
     public PostDTO updatePost(@RequestBody Map<String, String> json, HttpServletRequest request)
-            throws NotOwnerException, PostDoesNotExistException, NullContentException {
+            throws NotOwnerException, PostDoesNotExistException, NullContentException, NullTitleException, NullUserException {
         String title = json.get("title");
         String updatedContent = json.get("updatedContent");
-        var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
-        return new PostDTO(postService.edit((User) user, title, updatedContent));
+        var user = getUserFromRequest(request);
+        return postService.edit(user, title, updatedContent).toDTO();
     }
 
     @DeleteMapping("/posts")
     public PostDTO deletePost(@RequestBody Map<String, String> json, HttpServletRequest request)
-            throws NotOwnerException, PostDoesNotExistException {
+            throws NotOwnerException, PostDoesNotExistException, NullUserException {
         String title = json.get("title");
-        var user = JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
-        return new PostDTO(postService.delete((User) user, title));
+        var user = getUserFromRequest(request);
+        return postService.delete(user, title).toDTO();
     }
 
     @ExceptionHandler(PostDoesNotExistException.class)
@@ -82,6 +83,14 @@ public class PostController {
         return "Request must contain content.";
     }
 
+    @ExceptionHandler(NullUserException.class)
+    public String nullUserExceptionHandler(HttpServletResponse response) {
+        response.setStatus(401);
+        return "No user found, please reauthenticate";
+    }
 
+    public User getUserFromRequest(HttpServletRequest request) throws NullUserException {
+        return JwtTokenService.getUserFromToken(request.getHeader("authorization").split(" ")[1]);
+    }
 
 }

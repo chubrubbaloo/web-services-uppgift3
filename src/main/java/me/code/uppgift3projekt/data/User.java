@@ -46,4 +46,8 @@ public class User implements UserDetails {
 
         return getUsername().equals(user.getUsername());
     }
+
+    public UserDTO toDTO(){
+        return new UserDTO(this);
+    }
 }

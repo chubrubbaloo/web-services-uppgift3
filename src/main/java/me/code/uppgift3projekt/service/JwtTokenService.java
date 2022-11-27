@@ -4,6 +4,8 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import me.code.uppgift3projekt.data.User;
+import me.code.uppgift3projekt.exception.NullUserException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -35,14 +37,14 @@ public class JwtTokenService {
                 .sign(algorithm);
     }
 
-    public UserDetails getUserFromToken(String jwtToken){
+    public User getUserFromToken(String jwtToken) throws NullUserException {
         if (jwtToken == null){
-            return null;
+            throw new NullUserException();
         }
         try{
-            return userService.loadUserByUsername(verifier.verify(jwtToken).getSubject());
+            return (User) userService.loadUserByUsername(verifier.verify(jwtToken).getSubject());
         } catch (JWTVerificationException ignored){}
-        return null;
+        throw new NullUserException();
     }
 
     public boolean validate(String jwtToken) {

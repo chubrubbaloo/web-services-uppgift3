@@ -21,10 +21,6 @@ public class PostService {
     public Post create(User user, String title, String content)
             throws PostAlreadyExistsException, NullContentException, NullTitleException {
 
-        if (title == null) throw new NullTitleException();
-
-        if (content == null) throw new NullContentException();
-
         var existing = repository.getByTitle(title);
         if (existing.isPresent())
             throw new PostAlreadyExistsException();
@@ -51,15 +47,14 @@ public class PostService {
     }
 
     public Post edit(User user, String title, String updatedContent)
-            throws PostDoesNotExistException, NotOwnerException, NullContentException {
+            throws PostDoesNotExistException, NotOwnerException, NullContentException, NullTitleException {
+        if (title == null) throw new NullTitleException();
         var post = repository
                 .getByTitle(title)
                 .orElseThrow(PostDoesNotExistException::new);
 
         if (!post.getCreator().equals(user))
             throw new NotOwnerException();
-
-        if (updatedContent == null) throw new NullContentException();
 
         post.setContent(updatedContent);
         repository.save(post);

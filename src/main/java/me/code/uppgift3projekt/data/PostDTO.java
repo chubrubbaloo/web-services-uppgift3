@@ -10,12 +10,12 @@ import lombok.Setter;
 public class PostDTO {
         String title;
         String content;
-        String creator;
+        UserDTO creator;
 
         public PostDTO(Post post){
-            this.title = post.getTitle();
-            this.content = post.getContent();
-            this.creator = post.getCreator().getUsername();
+            this.setTitle(post.getTitle());
+            this.setContent(post.getContent());
+            this.setCreator(post.getCreator().toDTO());
         }
 
 }
