@@ -7,6 +7,7 @@ import me.code.uppgift3projekt.data.User;
 import me.code.uppgift3projekt.exception.*;
 import me.code.uppgift3projekt.service.JwtTokenService;
 import me.code.uppgift3projekt.service.PostService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,6 +52,12 @@ public class PostController {
         String title = json.get("title");
         var user = getUserFromRequest(request);
         return postService.delete(user, title).toDTO();
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public String usernameNotFoundExceptionHandler(HttpServletResponse response) {
+        response.setStatus(401);
+        return "unauthorized";
     }
 
     @ExceptionHandler(PostDoesNotExistException.class)

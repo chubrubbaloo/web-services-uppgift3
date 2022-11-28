@@ -50,10 +50,10 @@ public class UserService implements UserDetailsService {
     public User loadUserFromCredentials(String username, String password){
         var user = repository.getByUsername(username);
         if (user.isEmpty()){
-            return null;
+            throw new UsernameNotFoundException("incorrect credentials.");
         }
         if (!passwordEncoder.matches(password, user.get().getPassword())){
-            return null;
+            throw new UsernameNotFoundException("incorrect credentials.");
         }
         return user.get();
     }
