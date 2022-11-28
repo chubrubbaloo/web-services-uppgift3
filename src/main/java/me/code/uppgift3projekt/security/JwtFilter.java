@@ -34,7 +34,6 @@ public class JwtFilter implements Filter {
             httpResponse.setStatus(401);
             return;
         }
-        httpRequest.setAttribute("user", jwtTokenService.getUserFromToken(authorizationHeader.split(" ")[1]) );
         filterChain.doFilter(request, response);
     }
 
