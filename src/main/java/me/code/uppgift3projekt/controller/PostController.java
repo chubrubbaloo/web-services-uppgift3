@@ -16,6 +16,7 @@ import java.util.Map;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin("http://localhost:3000")
 public class PostController {
 
 
